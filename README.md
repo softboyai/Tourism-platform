@@ -2,6 +2,8 @@
 
 A complete web application for promoting tourism in Gabon's Ogooué-Maritime Province. Built with Node.js, Express, MongoDB, and Vanilla JavaScript.
 
+**Repository:** [https://github.com/softboyai/Tourism-platform](https://github.com/softboyai/Tourism-platform)
+
 ## Features
 
 ### Public Website
@@ -78,8 +80,8 @@ A complete web application for promoting tourism in Gabon's Ogooué-Maritime Pro
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd TOURISM-PLATFORM
+   git clone https://github.com/softboyai/Tourism-platform.git
+   cd Tourism-platform
    ```
 
 2. **Install backend dependencies**
@@ -120,9 +122,8 @@ A complete web application for promoting tourism in Gabon's Ogooué-Maritime Pro
    npm start    # Production
    ```
 
-7. **Open frontend**
-   - Simply open `frontend/index.html` in a browser
-   - Or use a local server:
+7. **Open frontend** (use a local server so API calls work)
+   - **Recommended:** Use a local server so login and data load correctly:
      ```bash
      # Using Python
      cd frontend

@@ -1,4 +1,4 @@
-// API Configuration
+// API Configuration – change this when deploying (e.g. your backend URL)
 const API_BASE_URL = 'http://localhost:5000/api';
 
 /**

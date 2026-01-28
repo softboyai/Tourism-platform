@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourism Promotion Platform - Ogooué-Maritime Province, Gabon</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🇬🇦 Gabon Tourism</h1>
+                <p class="subtitle">Ogooué-Maritime Province</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="sites.html">Tourist Sites</a></li>
+                <li><a href="hotels.html">Hotels</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="guides.html">Tour Guides</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="admin-login.html" class="admin-link">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Welcome to Ogooué-Maritime Province</h2>
+            <p>Discover the beauty of Gabon's coastal paradise</p>
+            <a href="sites.html" class="btn btn-primary">Explore Sites</a>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="sites-count">0</h3>
+                    <p>Tourist Sites</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="hotels-count">0</h3>
+                    <p>Hotels</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="events-count">0</h3>
+                    <p>Upcoming Events</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="guides-count">0</h3>
+                    <p>Tour Guides</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title">Featured Tourist Sites</h2>
+            <div class="sites-grid" id="featured-sites">
+                <p class="loading">Loading featured sites...</p>
+            </div>
+            <a href="sites.html" class="btn btn-secondary">View All Sites</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Tourism Promotion Platform - Ogooué-Maritime Province, Gabon</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
+

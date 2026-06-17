@@ -1,61 +1,62 @@
 # ⚡ Quick Run Guide
 
-Fastest way to get the Tourism Platform running locally.
+Get the Tourism Platform running locally in under 5 minutes.
 
 ---
 
 ## Prerequisites
 
-- **Node.js** v16+ installed → [nodejs.org](https://nodejs.org/)
+- **Node.js** v16+ → [nodejs.org](https://nodejs.org/)
 - **MongoDB** running locally → [download](https://www.mongodb.com/try/download/community)
-  - Or use MongoDB Atlas (cloud, free) → [atlas](https://www.mongodb.com/cloud/atlas/register)
+  - Or use MongoDB Atlas (free cloud) → [atlas](https://www.mongodb.com/cloud/atlas/register)
 
 ---
 
-## 5-Minute Setup
+## Setup
 
 ```bash
 # 1. Clone
 git clone https://github.com/softboyai/Tourism-platform.git
-cd Tourism-platform
+cd Tourism-platform/backend
 
 # 2. Install dependencies
-cd backend
 npm install
 
-# 3. Create .env file
+# 3. Create .env from template
 cp .env.example .env
-# Edit .env → set your MONGODB_URI (and optionally SMTP for emails)
+# Open .env and set your MONGODB_URI if needed
 
-# 4. Make sure MongoDB is running
-# Windows: net start MongoDB
-# Mac: brew services start mongodb-community
-# Atlas: just set the URI in .env
+# 4. Start MongoDB (Windows local)
+net start MongoDB
 
-# 5. Seed database with sample data
+# 5. Seed database with sample data + admin account
 npm run seed
 
-# 6. Start the server
+# 6. Start server
 npm run dev
 ```
 
+Server starts at **http://localhost:5000**
+
 ---
 
-## Open in Browser
+## Pages
 
 | Page | URL |
 |------|-----|
-| 🏠 Homepage | http://localhost:5000 |
+| 🏠 Home | http://localhost:5000 |
 | 🏝️ Tourist Sites | http://localhost:5000/sites.html |
 | 🏨 Hotels | http://localhost:5000/hotels.html |
 | 🎉 Events | http://localhost:5000/events.html |
 | 🧑‍🏫 Tour Guides | http://localhost:5000/guides.html |
 | 📩 Contact | http://localhost:5000/contact.html |
+| 📋 My Bookings | http://localhost:5000/my-bookings.html |
 | 🔐 Admin Login | http://localhost:5000/admin-login.html |
+| ❤️ Favorites | http://localhost:5000/favorites.html |
 
 ---
 
-## Admin Login
+## Admin Credentials
 
 | Field | Value |
 |-------|-------|
@@ -64,41 +65,25 @@ npm run dev
 
 ---
 
-## Email Replies (Optional)
+## How It Works
 
-To enable email sending when admin replies to visitor messages, edit `backend/.env`:
-
-```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-gmail-app-password
-```
-
-**Gmail setup:** Google Account → Security → 2-Step Verification → App passwords → Create one.
-
-Without SMTP configured, replies are saved in the database but not emailed.
+1. **Visitors** browse the site freely — no account needed
+2. **Register / Login** to unlock booking features
+3. **Book** hotels, events, or tour guides via the "Book Now" button
+4. Track booking status in **My Bookings** (Pending → Confirmed / Cancelled)
+5. **Admin** manages everything from the dashboard — content, bookings, messages, reports
 
 ---
 
-## Common Issues
+## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| Cannot connect to MongoDB | Start MongoDB: `net start MongoDB` |
-| Invalid password | Run `npm run seed` to reset admin |
-| Token expired | Log in again (tokens last 7 days) |
-| Port 5000 busy | Change `PORT` in `.env`, update `API_BASE_URL` in `frontend/js/api.js` |
+| MongoDB not connecting | `net start MongoDB` |
+| Invalid admin password | `npm run seed` to reset |
+| Token expired | Log in again |
+| Port 5000 in use | Change `PORT` in `.env` |
 
 ---
 
-## Project Summary
-
-- **Backend:** Node.js + Express + MongoDB + JWT + Nodemailer
-- **Frontend:** HTML + CSS + Vanilla JavaScript (no framework)
-- **No user accounts** — the site is an information bridge only
-- **Admin** manages all content via dashboard
-- **Visitors** browse info and contact services directly via phone/email/WhatsApp shown on listings
-- **Contact form** → admin replies → reply emailed to visitor
-
-See `README.md` for full documentation.
+See **README.md** for full documentation, API reference, and booking flow.

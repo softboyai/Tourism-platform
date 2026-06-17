@@ -31,6 +31,7 @@
                 <li><a href="#" data-tab="hotels">Hotels</a></li>
                 <li><a href="#" data-tab="events">Events</a></li>
                 <li><a href="#" data-tab="guides">Tour Guides</a></li>
+                <li><a href="#" data-tab="bookings">📋 Bookings</a></li>
                 <li><a href="#" data-tab="inquiries">Inquiries</a></li>
             </ul>
         </div>
@@ -147,6 +148,31 @@
                         </thead>
                         <tbody id="guides-table-body">
                             <tr><td colspan="4" class="loading">Loading guides...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bookings Tab -->
+            <div id="bookings-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>📋 Booking Requests</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Item</th>
+                                <th>Date</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookings-table-body">
+                            <tr><td colspan="7" class="loading">Loading bookings...</td></tr>
                         </tbody>
                     </table>
                 </div>

@@ -12,8 +12,10 @@ async function apiRequest(endpoint, options = {}) {
         },
     };
 
-    // Add Authorization header if token exists
-    const token = localStorage.getItem('adminToken');
+    // Add Authorization header — prefer user token, fall back to admin token
+    const userToken = localStorage.getItem('userToken');
+    const adminToken = localStorage.getItem('adminToken');
+    const token = userToken || adminToken;
     if (token) {
         defaultOptions.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -25,12 +27,20 @@ async function apiRequest(endpoint, options = {}) {
         const data = await response.json();
 
         if (!response.ok) {
-            // Handle token expiration — redirect to login
+            // Handle token expiration
             if (response.status === 401 && data.message && data.message.toLowerCase().includes('token')) {
-                localStorage.removeItem('adminToken');
-                if (window.location.pathname.includes('admin-dashboard')) {
-                    alert('Session expired. Please log in again.');
-                    window.location.href = 'admin-login.html';
+                if (userToken) {
+                    localStorage.removeItem('userToken');
+                    localStorage.removeItem('userInfo');
+                    if (!window.location.pathname.includes('login')) {
+                        window.location.href = 'login.html';
+                    }
+                } else if (adminToken) {
+                    localStorage.removeItem('adminToken');
+                    if (window.location.pathname.includes('admin-dashboard')) {
+                        alert('Session expired. Please log in again.');
+                        window.location.href = 'admin-login.html';
+                    }
                 }
             }
             throw new Error(data.message || 'API request failed');
@@ -69,6 +79,51 @@ const api = {
         method: 'POST',
         body: JSON.stringify(data),
     }),
+
+    // User Auth
+    register: (data) => apiRequest('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
+    userLogin: (email, password) => apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+    }),
+    getProfile: () => apiRequest('/auth/me'),
+
+    // Bookings (user)
+    createBooking: (data) => apiRequest('/bookings', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
+    getMyBookings: () => {
+        // Use user token explicitly
+        const token = localStorage.getItem('userToken');
+        return fetch(`${API_BASE_URL}/bookings/mine`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to fetch bookings');
+            return data;
+        });
+    },
+    cancelBooking: (id) => {
+        const token = localStorage.getItem('userToken');
+        return fetch(`${API_BASE_URL}/bookings/${id}/cancel`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to cancel booking');
+            return data;
+        });
+    },
 
     // Admin Auth
     adminLogin: (email, password) => apiRequest('/admin/login', {
@@ -200,6 +255,14 @@ const api = {
         body: JSON.stringify({ adminReply }),
     }),
     deleteInquiry: (id) => apiRequest(`/admin/inquiries/${id}`, { method: 'DELETE' }),
+
+    // Bookings (Admin)
+    getAdminBookings: () => apiRequest('/admin/bookings'),
+    updateBookingStatus: (id, status, adminNote) => apiRequest(`/admin/bookings/${id}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status, adminNote }),
+    }),
+    deleteAdminBooking: (id) => apiRequest(`/admin/bookings/${id}`, { method: 'DELETE' }),
 
     // Reports
     getReport: (type) => apiRequest(`/admin/reports?type=${type}`),

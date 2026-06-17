@@ -22,6 +22,7 @@
                 <li><a href="guides.html">Tour Guides</a></li>
                 <li><a href="favorites.html">❤️ Favorites</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li id="nav-user-area"></li>
                 <li><a href="admin-login.html" class="admin-link">Admin</a></li>
             </ul>
         </div>
@@ -35,15 +36,23 @@
         </div>
     </div>
 
+    <!-- Booking Modal -->
+    <div id="booking-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:12px; padding:2rem; max-width:480px; width:90%; max-height:80vh; overflow-y:auto; position:relative;">
+            <button onclick="closeBookingModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button>
+            <div id="booking-modal-body"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Tourism Promotion Platform - Ogooué-Maritime Province, Gabon</p>
+            <p>&copy; 2026 Tourism Promotion Platform - Ogooué-Maritime Province, Gabon</p>
         </div>
     </footer>
 
     <script src="js/api.js"></script>
+    <script src="js/user-auth.js"></script>
     <script src="js/events.js"></script>
 </body>
 </html>
-

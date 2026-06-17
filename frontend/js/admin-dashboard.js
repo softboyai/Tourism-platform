@@ -80,6 +80,9 @@ function switchTab(tabName) {
         case 'guides':
             loadGuides();
             break;
+        case 'bookings':
+            loadAdminBookings();
+            break;
         case 'inquiries':
             loadInquiries();
             break;
@@ -738,6 +741,131 @@ async function deleteGuide(guideId) {
 
 function editGuide(guideId) {
     showGuideForm(guideId);
+}
+
+// ========== BOOKINGS MANAGEMENT (ADMIN) ==========
+async function loadAdminBookings() {
+    try {
+        const response = await api.getAdminBookings();
+        const bookings = response.data || [];
+        const tbody = document.getElementById('bookings-table-body');
+
+        if (bookings.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No booking requests yet.</td></tr>';
+            return;
+        }
+
+        const statusColor = { pending: '#e67e22', confirmed: '#27ae60', cancelled: '#e74c3c' };
+        const typeIcon = { hotel: '🏨', event: '🎉', guide: '🧑‍🏫' };
+
+        tbody.innerHTML = bookings.map(b => {
+            const date = new Date(b.checkInDate).toLocaleDateString();
+            const createdDate = new Date(b.createdAt).toLocaleDateString();
+            const userName = b.user ? b.user.fullName : 'Unknown';
+            const userEmail = b.user ? b.user.email : '';
+            return `
+                <tr>
+                    <td>
+                        <strong>${userName}</strong><br>
+                        <small style="color:#999;">${userEmail}</small>
+                    </td>
+                    <td>${typeIcon[b.type] || ''} ${b.type}</td>
+                    <td>${b.itemName}</td>
+                    <td>${date}<br><small style="color:#999;">Submitted: ${createdDate}</small></td>
+                    <td>${b.numberOfGuests}</td>
+                    <td>
+                        <span style="background:${statusColor[b.status]};color:white;padding:3px 10px;border-radius:12px;font-size:0.8rem;font-weight:600;">
+                            ${b.status}
+                        </span>
+                    </td>
+                    <td class="table-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="viewBooking('${b._id}')">View</button>
+                        ${b.status === 'pending' ? `
+                            <button class="btn btn-sm btn-primary" onclick="updateBooking('${b._id}', 'confirmed')" style="background:#27ae60;">✅ Confirm</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateBooking('${b._id}', 'cancelled')">❌ Cancel</button>
+                        ` : ''}
+                        <button class="btn btn-sm btn-danger" onclick="deleteAdminBooking('${b._id}')">Delete</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        document.getElementById('bookings-table-body').innerHTML =
+            '<tr><td colspan="7" class="error-message">Failed to load bookings: ' + error.message + '</td></tr>';
+    }
+}
+
+function viewBooking(bookingId) {
+    api.getAdminBookings().then(response => {
+        const b = (response.data || []).find(x => x._id === bookingId);
+        if (!b) return;
+        const modalBody = document.getElementById('modal-body');
+        const date = new Date(b.checkInDate).toLocaleDateString();
+        modalBody.innerHTML = `
+            <h2>Booking Details</h2>
+            <p><strong>User:</strong> ${b.user ? b.user.fullName : 'Unknown'} (${b.user ? b.user.email : ''})</p>
+            <p><strong>Type:</strong> ${b.type} — ${b.itemName}</p>
+            <p><strong>Date:</strong> ${date}${b.checkOutDate ? ' → ' + new Date(b.checkOutDate).toLocaleDateString() : ''}</p>
+            <p><strong>Guests:</strong> ${b.numberOfGuests}</p>
+            <p><strong>Status:</strong> ${b.status}</p>
+            ${b.specialRequests ? `<p><strong>Special Requests:</strong> ${b.specialRequests}</p>` : ''}
+            ${b.adminNote ? `<div style="background:#e8f5e9;padding:1rem;border-radius:6px;margin:1rem 0;"><strong>Admin Note:</strong> ${b.adminNote}</div>` : ''}
+            <hr style="margin:1rem 0;">
+            <h3>Update Status</h3>
+            <form onsubmit="submitBookingUpdate(event, '${b._id}')">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="update-status">
+                        <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                        <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Note to user (optional)</label>
+                    <textarea id="update-note" rows="3" placeholder="e.g. Your booking is confirmed for room 101.">${b.adminNote || ''}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Booking</button>
+            </form>
+        `;
+        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('modal').classList.add('show');
+    });
+}
+
+async function submitBookingUpdate(e, bookingId) {
+    e.preventDefault();
+    const status = document.getElementById('update-status').value;
+    const adminNote = document.getElementById('update-note').value.trim();
+    try {
+        await api.updateBookingStatus(bookingId, status, adminNote);
+        closeModal();
+        loadAdminBookings();
+        alert('Booking updated successfully!');
+    } catch (error) {
+        alert('Failed to update: ' + error.message);
+    }
+}
+
+async function updateBooking(bookingId, status) {
+    const action = status === 'confirmed' ? 'confirm' : 'cancel';
+    if (!confirm(`Are you sure you want to ${action} this booking?`)) return;
+    try {
+        await api.updateBookingStatus(bookingId, status, '');
+        loadAdminBookings();
+    } catch (error) {
+        alert('Failed to update booking: ' + error.message);
+    }
+}
+
+async function deleteAdminBooking(bookingId) {
+    if (!confirm('Delete this booking permanently?')) return;
+    try {
+        await api.deleteAdminBooking(bookingId);
+        loadAdminBookings();
+    } catch (error) {
+        alert('Failed to delete: ' + error.message);
+    }
 }
 
 // ========== INQUIRIES MANAGEMENT ==========

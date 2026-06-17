@@ -1,20 +1,36 @@
 # 🇬🇦 Tourism Promotion Platform — Ogooué-Maritime Province, Gabon
 
-A full-stack web application for promoting tourism in the Ogooué-Maritime Province of Gabon. The platform serves as an **information bridge** connecting visitors with local tourist sites, hotels, events, and tour guides — without requiring user accounts or bookings.
+A full-stack web application for promoting tourism in the Ogooué-Maritime Province of Gabon. Visitors can register, log in, and book hotels, events, and tour guides. Admins manage all content and bookings through a dedicated dashboard.
 
-## 📋 Project Overview
+---
 
+## 📋 Features
+
+### Visitor / User
 | Feature | Description |
 |---------|-------------|
-| **Tourist Sites** | Browse beaches, parks, museums, waterfalls with photos, contact info, and map links |
-| **Hotels** | View hotels with prices, phone, WhatsApp, and address |
-| **Events** | Upcoming events with dates, venues, organizer contacts |
-| **Tour Guides** | Find guides with languages, fees, phone, and WhatsApp |
-| **Contact System** | Visitors send messages → Admin replies → Reply sent to visitor's email |
-| **Admin Dashboard** | Full CRUD management, reports (daily/weekly), PDF export |
-| **Favorites** | Visitors can bookmark sites/hotels locally (no account needed) |
+| **Browse** | Tourist sites, hotels, events, tour guides with photos and contact info |
+| **Register / Login** | Create a personal account to make bookings |
+| **Book** | Request bookings for hotels, events, and tour guides |
+| **My Bookings** | View all your booking requests and their status (Pending / Confirmed / Cancelled) |
+| **Admin note** | See admin responses attached to your bookings |
+| **Favorites** | Save sites and hotels to a local favorites list (no login needed) |
+| **Contact** | Send a message to the admin via the contact form |
 
-> **Important:** This platform is an information portal (bridge). There are no user accounts, no bookings, no payments. Visitors contact services directly via the phone/email/WhatsApp shown on each listing.
+### Admin
+| Feature | Description |
+|---------|-------------|
+| **Dashboard** | Manage all content from one panel |
+| **CRUD** | Create, edit, delete tourist sites, hotels, events, tour guides |
+| **Bookings** | View all booking requests, confirm or cancel them, add notes to users |
+| **Inquiries** | Read visitor messages and reply (reply saved in database) |
+| **Reports** | Daily / weekly statistics with PDF export |
+| **Image upload** | Multiple images for sites and hotels, poster for events |
+
+### Navigation logic
+- **Not logged in** → Login and Register buttons visible, Admin link visible
+- **Logged in as user** → username, My Bookings, Logout visible — Admin link hidden
+- **Admin** accesses the platform via a separate login at `/admin-login.html`
 
 ---
 
@@ -22,43 +38,79 @@ A full-stack web application for promoting tourism in the Ogooué-Maritime Provi
 
 ```
 Tourism-platform/
-├── backend/                  # Node.js + Express API server
-│   ├── server.js             # Entry point
-│   ├── seed-data.js          # Database seeding script
-│   ├── .env.example          # Environment variables template
-│   ├── src/
-│   │   ├── config/           # Database connection
-│   │   ├── models/           # Mongoose schemas (Site, Hotel, Event, Guide, Inquiry, Admin)
-│   │   ├── controllers/      # Business logic
-│   │   ├── routes/           # API endpoints
-│   │   ├── middleware/       # JWT auth, file upload
-│   │   ├── utils/            # Email service, seed admin
-│   │   └── uploads/          # Uploaded images (gitignored)
-│   └── package.json
-├── frontend/                 # Static HTML/CSS/JS (no framework)
-│   ├── index.html            # Homepage
-│   ├── sites.html            # Tourist sites listing
-│   ├── site-details.html     # Single site details page
-│   ├── hotels.html           # Hotels listing
-│   ├── events.html           # Events listing
-│   ├── guides.html           # Tour guides listing
-│   ├── favorites.html        # Saved favorites (localStorage)
-│   ├── contact.html          # Contact form
-│   ├── admin-login.html      # Admin login page
-│   ├── admin-dashboard.html  # Admin management panel
-│   ├── css/styles.css        # All styles
-│   ├── js/
-│   │   ├── api.js            # API client (all fetch calls)
-│   │   ├── sites.js          # Sites page logic
-│   │   ├── site-details.js   # Site details page logic
-│   │   ├── hotels.js         # Hotels page logic
-│   │   ├── events.js         # Events page logic
-│   │   ├── guides.js         # Guides page logic
-│   │   ├── contact.js        # Contact form logic
-│   │   ├── admin-login.js    # Admin login logic
-│   │   └── admin-dashboard.js # Admin CRUD + reports
-│   └── images/               # Static images
-└── README.md                 # This file
+├── backend/                        # Node.js + Express API
+│   ├── server.js                   # Entry point — registers all routes
+│   ├── seed-data.js                # Seed script (sample data + admin account)
+│   ├── .env.example                # Environment variables template
+│   └── src/
+│       ├── config/database.js      # MongoDB connection
+│       ├── models/
+│       │   ├── Admin.js            # Admin account
+│       │   ├── User.js             # Visitor accounts (register/login)
+│       │   ├── Booking.js          # Booking requests
+│       │   ├── Site.js             # Tourist sites
+│       │   ├── Hotel.js            # Hotels
+│       │   ├── Event.js            # Events
+│       │   ├── Guide.js            # Tour guides
+│       │   └── Inquiry.js          # Contact messages
+│       ├── controllers/
+│       │   ├── userAuthController.js   # Register, login, profile
+│       │   ├── bookingController.js    # Booking CRUD (user + admin)
+│       │   ├── authController.js       # Admin login
+│       │   ├── adminController.js      # Reports, seed
+│       │   ├── siteController.js
+│       │   ├── hotelController.js
+│       │   ├── eventController.js
+│       │   ├── guideController.js
+│       │   └── inquiryController.js
+│       ├── routes/
+│       │   ├── userRoutes.js       # /api/auth/register, /api/auth/login
+│       │   ├── bookingRoutes.js    # /api/bookings, /api/admin/bookings
+│       │   ├── authRoutes.js       # /api/admin/login
+│       │   ├── adminRoutes.js      # /api/admin/reports
+│       │   ├── siteRoutes.js
+│       │   ├── hotelRoutes.js
+│       │   ├── eventRoutes.js
+│       │   ├── guideRoutes.js
+│       │   └── inquiryRoutes.js
+│       ├── middleware/
+│       │   ├── auth.js             # Admin JWT verification
+│       │   ├── userAuth.js         # User JWT verification
+│       │   └── uploadMiddleware.js # Multer file upload
+│       └── utils/
+│           ├── emailService.js     # SMTP email (optional)
+│           ├── seedAdmin.js
+│           └── upload.js
+├── frontend/                       # Static HTML/CSS/JS (no framework)
+│   ├── index.html                  # Homepage
+│   ├── sites.html                  # Tourist sites listing
+│   ├── site-details.html           # Single site detail
+│   ├── hotels.html                 # Hotels listing + Book Now
+│   ├── events.html                 # Events listing + Register/Book
+│   ├── guides.html                 # Guides listing + Book Guide
+│   ├── favorites.html              # Saved favorites (localStorage)
+│   ├── contact.html                # Contact form
+│   ├── register.html               # User registration
+│   ├── login.html                  # User login
+│   ├── my-bookings.html            # User bookings dashboard
+│   ├── admin-login.html            # Admin login
+│   ├── admin-dashboard.html        # Admin management panel
+│   ├── css/styles.css              # All styles (original green + gold theme)
+│   └── js/
+│       ├── api.js                  # All API calls (admin + user)
+│       ├── user-auth.js            # User session helpers + nav rendering
+│       ├── register.js
+│       ├── login.js
+│       ├── my-bookings.js
+│       ├── sites.js
+│       ├── site-details.js
+│       ├── hotels.js               # Includes booking modal
+│       ├── events.js               # Includes booking modal
+│       ├── guides.js               # Includes booking modal
+│       ├── contact.js
+│       ├── admin-dashboard.js      # Full CRUD + bookings + inquiries
+│       └── admin-login.js
+└── README.md
 ```
 
 ---
@@ -69,275 +121,190 @@ Tourism-platform/
 |-------|-----------|
 | **Backend** | Node.js, Express.js |
 | **Database** | MongoDB (Mongoose ODM) |
-| **Authentication** | JWT (JSON Web Tokens) — admin only |
+| **Auth** | JWT — separate tokens for users and admins |
 | **File Upload** | Multer |
-| **Email** | Nodemailer (SMTP) |
+| **Email (optional)** | Nodemailer (SMTP) |
 | **PDF Reports** | PDFKit |
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
-| **No frameworks** | No React/Vue/Angular — pure HTML/JS |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript — no framework |
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Setup & Run
 
 ### Prerequisites
+- **Node.js** v16+ → [nodejs.org](https://nodejs.org/)
+- **MongoDB** local or cloud:
+  - Local: [Download MongoDB Community](https://www.mongodb.com/try/download/community)
+  - Cloud free tier: [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register)
 
-1. **Node.js** (v16 or higher) — [Download](https://nodejs.org/)
-2. **MongoDB** — either:
-   - Local install: [Download MongoDB Community](https://www.mongodb.com/try/download/community)
-   - Or cloud: [MongoDB Atlas Free Tier](https://www.mongodb.com/cloud/atlas/register)
-3. **Git** — [Download](https://git-scm.com/)
-
-### Step 1: Clone the Repository
-
+### Step 1 — Clone
 ```bash
 git clone https://github.com/softboyai/Tourism-platform.git
 cd Tourism-platform
 ```
 
-### Step 2: Install Backend Dependencies
-
+### Step 2 — Install dependencies
 ```bash
 cd backend
 npm install
 ```
 
-### Step 3: Configure Environment Variables
-
+### Step 3 — Configure environment
 ```bash
 cp .env.example .env
 ```
-
-Edit `backend/.env` with your settings:
-
+Edit `backend/.env` — at minimum set your MongoDB URI:
 ```env
-# Required — your MongoDB connection string
 MONGODB_URI=mongodb://localhost:27017/tourism-platform
-
-# Required — any random secret string for JWT tokens
-JWT_SECRET=my-secret-key-for-jwt-tokens
+JWT_SECRET=any-random-secret-string
 ```
 
-> **Email is OPTIONAL for local use.** The project works fully without SMTP. Admin replies are saved in the database. If you want replies also emailed to visitors, see the "Email Setup" section below.
-
-### Step 4: Start MongoDB
-
-**Local MongoDB (Windows):**
+### Step 4 — Start MongoDB (local)
 ```bash
+# Windows
 net start MongoDB
 ```
 
-**Or if using MongoDB Atlas:** just make sure your `MONGODB_URI` in `.env` points to your Atlas cluster.
-
-### Step 5: Seed the Database (Sample Data)
-
+### Step 5 — Seed database
 ```bash
-cd backend
 npm run seed
 ```
+Creates sample data and the admin account:
 
-This creates:
-- 1 admin account (`admin@tourism-gabon.com` / `admin123`)
-- 8 tourist sites with contact info
-- 7 hotels across different price ranges
-- 6 events with organizer contacts
-- 6 tour guides with phone/WhatsApp
+| Field | Value |
+|-------|-------|
+| Admin email | `admin@tourism-gabon.com` |
+| Admin password | `admin123` |
 
-### Step 6: Start the Server
-
+### Step 6 — Start server
 ```bash
 npm run dev
 ```
-
 You should see:
 ```
 🚀 Server is running on port 5000
 ✅ MongoDB Connected: localhost
 ```
 
-### Step 7: Open in Browser
+### Step 7 — Open browser
+The server serves both the API and the frontend.
 
-The backend serves both the API and the frontend:
-
-| URL | What |
-|-----|------|
-| http://localhost:5000 | Homepage |
-| http://localhost:5000/sites.html | Tourist Sites |
-| http://localhost:5000/hotels.html | Hotels |
-| http://localhost:5000/events.html | Events |
-| http://localhost:5000/guides.html | Tour Guides |
-| http://localhost:5000/contact.html | Contact Form |
-| http://localhost:5000/admin-login.html | Admin Login |
-| http://localhost:5000/health | API Health Check |
-
----
-
-## 👤 Admin Credentials
-
-After running `npm run seed`:
-
-| Field | Value |
-|-------|-------|
-| **Email** | `admin@tourism-gabon.com` |
-| **Password** | `admin123` |
+| Page | URL |
+|------|-----|
+| 🏠 Home | http://localhost:5000 |
+| 🏝️ Sites | http://localhost:5000/sites.html |
+| 🏨 Hotels | http://localhost:5000/hotels.html |
+| 🎉 Events | http://localhost:5000/events.html |
+| 🧑‍🏫 Guides | http://localhost:5000/guides.html |
+| 📋 My Bookings | http://localhost:5000/my-bookings.html |
+| 📩 Contact | http://localhost:5000/contact.html |
+| 🔐 Admin | http://localhost:5000/admin-login.html |
+| ❤️ Favorites | http://localhost:5000/favorites.html |
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Reference
 
-### Public (No authentication required)
-
+### Public endpoints (no auth)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/sites` | Get all tourist sites (with search/filter) |
-| GET | `/api/sites/:id` | Get single site details |
-| GET | `/api/hotels` | Get all hotels |
-| GET | `/api/hotels/:id` | Get single hotel |
-| GET | `/api/events` | Get all events |
-| GET | `/api/events/:id` | Get single event |
-| GET | `/api/guides` | Get all guides |
-| GET | `/api/guides/:id` | Get single guide |
-| POST | `/api/inquiries` | Submit a contact message |
-| POST | `/api/admin/login` | Admin login (returns JWT) |
+| GET | `/api/sites` | All tourist sites (supports `?search=&category=&city=`) |
+| GET | `/api/sites/:id` | Single site |
+| GET | `/api/hotels` | All hotels |
+| GET | `/api/hotels/:id` | Single hotel |
+| GET | `/api/events` | All events |
+| GET | `/api/events/:id` | Single event |
+| GET | `/api/guides` | All guides |
+| GET | `/api/guides/:id` | Single guide |
+| POST | `/api/inquiries` | Submit contact message |
+| POST | `/api/admin/login` | Admin login |
 
-### Admin (JWT token required in `Authorization: Bearer <token>` header)
-
+### User endpoints (JWT — user token required)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/sites` | Create a site (multipart/form-data) |
-| PUT | `/api/sites/:id` | Update a site |
-| DELETE | `/api/sites/:id` | Delete a site |
-| POST | `/api/hotels` | Create a hotel (multipart/form-data) |
-| PUT | `/api/hotels/:id` | Update a hotel |
-| DELETE | `/api/hotels/:id` | Delete a hotel |
-| POST | `/api/events` | Create an event (multipart/form-data) |
-| PUT | `/api/events/:id` | Update an event |
-| DELETE | `/api/events/:id` | Delete an event |
-| POST | `/api/guides` | Create a guide |
-| PUT | `/api/guides/:id` | Update a guide |
-| DELETE | `/api/guides/:id` | Delete a guide |
-| GET | `/api/admin/inquiries` | Get all contact messages |
-| PUT | `/api/admin/inquiries/:id/reply` | Reply to a message (sends email) |
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | User login |
+| GET | `/api/auth/me` | Get logged-in user profile |
+| POST | `/api/bookings` | Create a booking |
+| GET | `/api/bookings/mine` | Get user's own bookings |
+| PUT | `/api/bookings/:id/cancel` | Cancel own booking |
+
+### Admin endpoints (JWT — admin token required)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST/PUT/DELETE | `/api/sites/:id` | Manage sites |
+| POST/PUT/DELETE | `/api/hotels/:id` | Manage hotels |
+| POST/PUT/DELETE | `/api/events/:id` | Manage events |
+| POST/PUT/DELETE | `/api/guides/:id` | Manage guides |
+| GET | `/api/admin/inquiries` | View all messages |
+| PUT | `/api/admin/inquiries/:id/reply` | Reply to a message |
 | DELETE | `/api/admin/inquiries/:id` | Delete a message |
-| GET | `/api/admin/reports?type=daily` | Get daily report |
-| GET | `/api/admin/reports?type=weekly` | Get weekly report |
-| GET | `/api/admin/reports/pdf?type=daily` | Download report as PDF |
+| GET | `/api/admin/bookings` | View all bookings |
+| PUT | `/api/admin/bookings/:id/status` | Confirm/cancel + add note |
+| DELETE | `/api/admin/bookings/:id` | Delete a booking |
+| GET | `/api/admin/reports?type=daily` | Daily report |
+| GET | `/api/admin/reports?type=weekly` | Weekly report |
+| GET | `/api/admin/reports/pdf?type=daily` | PDF report download |
 
 ---
 
-## ✨ Key Features Explained
+## 🔄 Booking Flow
 
-### 1. Contact & Reply System (No User Account)
-
-- Visitor fills the contact form (name + email + message)
-- Message is saved in the database
-- Admin sees all messages in the dashboard with status (Pending/Replied)
-- Admin clicks "Reply" → types a response
-- The reply is **emailed directly to the visitor's email address**
-- No user account or login needed for visitors
-
-### 2. Information Bridge (No Booking)
-
-The platform does NOT handle bookings or payments. It shows contact information for each service:
-- **Sites** → phone, email, address
-- **Hotels** → phone, WhatsApp, address
-- **Events** → organizer name, phone, email
-- **Guides** → phone, WhatsApp
-
-Visitors contact them directly.
-
-### 3. Admin Dashboard
-
-- **Reports:** Daily/weekly statistics with PDF download
-- **CRUD:** Create, Read, Update, Delete for all entities
-- **Image Upload:** Multiple images for sites/hotels, poster for events
-- **JWT Auth:** Token expires in 7 days, auto-redirect to login when expired
-
-### 4. Favorites (Local Storage)
-
-Visitors can "favorite" sites and hotels. Saved in the browser's localStorage — no account needed, but favorites are lost if browser data is cleared.
+```
+User registers / logs in
+        ↓
+Browses hotels / events / guides
+        ↓
+Clicks "Book Now" / "Register" / "Book Guide"
+        ↓
+Fills booking form (date, guests, notes)
+        ↓
+Booking saved → status: PENDING
+        ↓
+Admin sees it in dashboard → Confirms or Cancels + adds a note
+        ↓
+User sees updated status + admin note in "My Bookings"
+```
 
 ---
 
 ## 🔧 Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| `MongoDB Connection Error` | Make sure MongoDB is running (`net start MongoDB`) or check your Atlas URI |
-| `Token expired` | Log in again at `/admin-login.html` — tokens last 7 days |
-| `Failed to fetch` | Make sure backend is running on port 5000 |
-| `Invalid email or password` | Run `npm run seed` to reset admin credentials |
-| `SMTP not configured` | This is normal for local use. Replies are saved but not emailed. |
-| `Port 5000 in use` | Change `PORT` in `.env` and update `API_BASE_URL` in `frontend/js/api.js` |
+| Problem | Fix |
+|---------|-----|
+| MongoDB connection error | Start MongoDB: `net start MongoDB` |
+| Invalid password at admin login | Run `npm run seed` to reset |
+| Token expired | Log in again (tokens last 7 days) |
+| Failed to fetch | Make sure backend is running on port 5000 |
+| Port 5000 in use | Change `PORT` in `.env`, update `API_BASE_URL` in `frontend/js/api.js` |
 
 ---
 
-## 📧 Email Setup (Optional — For Gmail)
+## 📧 Email Setup (Optional)
 
-**The project works 100% without email.** This is only needed if you want admin replies to actually reach the visitor's inbox.
+The platform works fully without email. If you want admin replies to the contact form to also send an email to the visitor:
 
-### Step-by-step Gmail SMTP setup:
-
-1. **Use or create a Gmail account** (e.g. `kamanzijeanmarievianney15@gmail.com`)
-
-2. **Enable 2-Step Verification:**
-   - Go to https://myaccount.google.com/security
-   - Click "2-Step Verification" → Turn it ON
-   - Follow the prompts (phone number verification)
-
-3. **Create an App Password:**
-   - Go to https://myaccount.google.com/apppasswords
-   - If you don't see this option, make sure 2-Step Verification is enabled
-   - Select app: "Mail"
-   - Select device: "Windows Computer"
-   - Click "Generate"
-   - Google gives you a **16-character password** (like `abcd efgh ijkl mnop`)
-
-4. **Add to your `backend/.env`:**
-   ```env
-   SMTP_HOST=smtp.gmail.com
-   SMTP_PORT=587
-   SMTP_SECURE=false
-   SMTP_USER=kamanzijeanmarievianney15@gmail.com
-   SMTP_PASS=abcd efgh ijkl mnop
-   SMTP_FROM="Gabon Tourism <kamanzijeanmarievianney15@gmail.com>"
-   ```
-   Replace the `SMTP_PASS` with your actual app password from step 3.
-
-5. **Restart the server** (`npm run dev`) — now when admin replies, the visitor gets an email.
-
-### Without email configured:
-- Admin can still reply to messages
-- Replies are saved in the database
-- Admin dashboard shows the reply status
-- But the visitor won't receive an email notification
+1. Enable Gmail 2-Step Verification at https://myaccount.google.com/security
+2. Create an App Password at https://myaccount.google.com/apppasswords
+3. Add to `backend/.env`:
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-16-char-app-password
+SMTP_FROM="Gabon Tourism <your-email@gmail.com>"
+```
+4. Restart the server.
 
 ---
 
 ## 📦 npm Scripts
 
-Run these from the `backend/` folder:
+Run from the `backend/` folder:
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start server with auto-reload (development) |
-| `npm start` | Start server (production) |
+| `npm run dev` | Start with auto-reload (development) |
+| `npm start` | Start without auto-reload (production) |
 | `npm run seed` | Populate database with sample data |
-
----
-
-## 🌐 Deployment
-
-For deployment (Render, Railway, VPS, etc.):
-
-1. Set environment variables on your hosting platform
-2. Use `npm start` (not `npm run dev`)
-3. Set `MONGODB_URI` to your Atlas connection string
-4. Update `API_BASE_URL` in `frontend/js/api.js` to your deployed URL
-5. Configure SMTP for email replies
-
----
-
-## 📝 License
-
-Student project — Ogooué-Maritime Province Tourism Promotion Platform.

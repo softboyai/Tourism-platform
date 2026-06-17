@@ -32,6 +32,8 @@ app.get('/health', (req, res) => {
 
 // Import routes
 const authRoutes = require('./src/routes/authRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const bookingRoutes = require('./src/routes/bookingRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const siteRoutes = require('./src/routes/siteRoutes');
 const hotelRoutes = require('./src/routes/hotelRoutes');
@@ -41,6 +43,8 @@ const inquiryRoutes = require('./src/routes/inquiryRoutes');
 
 // API Routes
 app.use('/api', authRoutes);
+app.use('/api', userRoutes);
+app.use('/api', bookingRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', siteRoutes);
 app.use('/api', hotelRoutes);

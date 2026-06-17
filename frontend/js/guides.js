@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="card">
                 <div class="card-content">
                     <h3 class="card-title">${guide.fullName}</h3>
-                    <p class="card-description">
+                    <div style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
                         <strong>Languages:</strong> ${guide.languages.join(', ')}<br>
                         <strong>Fees:</strong> ${guide.fees}<br>
                         <strong>Areas Covered:</strong> ${guide.areasCovered.join(', ')}
-                    </p>
+                    </div>
                     <div class="card-meta" style="flex-direction: column; gap: 0.5rem; align-items: flex-start;">
                         <div>📍 ${guide.city}</div>
                         ${guide.phone ? `<div>📞 ${guide.phone}</div>` : ''}

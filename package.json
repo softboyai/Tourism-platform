@@ -1,0 +1,8 @@
+{
+  "name": "tourism-platform",
+  "version": "1.0.0",
+  "description": "Tourism Promotion Platform - Gabon",
+  "scripts": {
+    "start:all": "cd backend && npx nodemon server.js"
+  }
+}

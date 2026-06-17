@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Gabon Tourism</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🔐 Admin Dashboard</h1>
+                <p class="subtitle">Tourism Platform Management</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">View Website</a></li>
+                <li><a href="#" id="logout-btn" class="admin-link">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" data-tab="reports" class="active">📊 Reports</a></li>
+                <li><a href="#" data-tab="sites">Tourist Sites</a></li>
+                <li><a href="#" data-tab="hotels">Hotels</a></li>
+                <li><a href="#" data-tab="events">Events</a></li>
+                <li><a href="#" data-tab="guides">Tour Guides</a></li>
+                <li><a href="#" data-tab="inquiries">Inquiries</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <!-- Reports Tab -->
+            <div id="reports-tab" class="tab-content active">
+                <div class="dashboard-header">
+                    <h2>📊 Data Reports</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary" onclick="downloadPDF()">📥 Download PDF</button>
+                        <button class="btn btn-secondary" onclick="printReport()">🖨️ Print</button>
+                    </div>
+                </div>
+
+                <!-- Toggle Switch -->
+                <div class="report-toggle">
+                    <button class="btn report-toggle-btn active" id="btn-daily" onclick="loadReport('daily')">📅 Today</button>
+                    <button class="btn report-toggle-btn" id="btn-weekly" onclick="loadReport('weekly')">📆 This Week</button>
+                </div>
+
+                <!-- Report Content -->
+                <div id="report-content" class="report-content">
+                    <div class="report-loading">Loading report...</div>
+                </div>
+            </div>
+
+            <!-- Sites Tab -->
+            <div id="sites-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Tourist Sites Management</h2>
+                    <button class="btn btn-primary" onclick="showSiteForm()">+ Add New Site</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sites-table-body">
+                            <tr><td colspan="4" class="loading">Loading sites...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hotels Tab -->
+            <div id="hotels-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Hotels Management</h2>
+                    <button class="btn btn-primary" onclick="showHotelForm()">+ Add New Hotel</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price Range</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hotels-table-body">
+                            <tr><td colspan="4" class="loading">Loading hotels...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Events Tab -->
+            <div id="events-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Events Management</h2>
+                    <button class="btn btn-primary" onclick="showEventForm()">+ Add New Event</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Venue</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table-body">
+                            <tr><td colspan="5" class="loading">Loading events...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Guides Tab -->
+            <div id="guides-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Tour Guides Management</h2>
+                    <button class="btn btn-primary" onclick="showGuideForm()">+ Add New Guide</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Languages</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guides-table-body">
+                            <tr><td colspan="4" class="loading">Loading guides...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inquiries Tab -->
+            <div id="inquiries-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Contact Inquiries</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiries-table-body">
+                            <tr><td colspan="6" class="loading">Loading inquiries...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Forms (will be populated dynamically) -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px; background: white; padding: 2rem; border-radius: 8px; max-height: 90vh; overflow-y: auto;">
+            <span class="close" onclick="closeModal()" style="float: right; font-size: 1.5rem; cursor: pointer;">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .close {
+            cursor: pointer;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .close:hover {
+            color: var(--error-color);
+        }
+
+        /* Report Styles */
+        .report-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.25rem;
+            background: #f0f0f0;
+            border-radius: 8px;
+            width: fit-content;
+        }
+
+        .report-toggle-btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: transparent;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+
+        .report-toggle-btn.active {
+            background: #2c7a4b;
+            color: white;
+            box-shadow: 0 2px 8px rgba(44, 122, 75, 0.3);
+        }
+
+        .report-toggle-btn:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        .report-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .report-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            border-left: 4px solid #2c7a4b;
+        }
+
+        .report-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-card .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c7a4b;
+        }
+
+        .report-card .card-label {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 0.25rem;
+        }
+
+        .report-card .card-total {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+
+        .report-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .report-summary h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .report-summary .period {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .report-loading {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media print {
+            .navbar, .sidebar, .report-toggle, #print-report-btn, .dashboard-header button {
+                display: none !important;
+            }
+            .dashboard-content {
+                margin: 0;
+                padding: 1rem;
+            }
+            .report-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
+
